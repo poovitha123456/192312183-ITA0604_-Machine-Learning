@@ -1,0 +1,29 @@
+import pandas as pd
+
+# Training Data
+data = {
+    'Sky':['Sunny','Sunny','Rainy','Sunny'],
+    'AirTemp':['Warm','Warm','Cold','Warm'],
+    'Humidity':['Normal','High','High','High'],
+    'Wind':['Strong','Strong','Strong','Strong'],
+    'Water':['Warm','Warm','Warm','Cool'],
+    'Forecast':['Same','Same','Change','Same'],
+    'EnjoySport':['Yes','Yes','No','Yes']
+}
+
+df = pd.DataFrame(data)
+print(df)
+
+concepts = df.iloc[:,:-1].values
+target = df.iloc[:,-1].values
+
+hypothesis = concepts[0].copy()
+
+for i in range(len(concepts)):
+    if target[i] == "Yes":
+        for j in range(len(hypothesis)):
+            if hypothesis[j] != concepts[i][j]:
+                hypothesis[j] = '?'
+
+print("\nMost Specific Hypothesis:")
+print(hypothesis)
