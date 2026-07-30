@@ -1,0 +1,41 @@
+import pandas as pd
+
+data = {
+    'Sky':['Sunny','Sunny','Rainy','Sunny'],
+    'AirTemp':['Warm','Warm','Cold','Warm'],
+    'Humidity':['Normal','High','High','High'],
+    'Wind':['Strong','Strong','Strong','Strong'],
+    'Water':['Warm','Warm','Warm','Cool'],
+    'Forecast':['Same','Same','Change','Same'],
+    'EnjoySport':['Yes','Yes','No','Yes']
+}
+
+df = pd.DataFrame(data)
+
+concepts = df.iloc[:,:-1].values
+target = df.iloc[:,-1].values
+
+specific_h = concepts[0].copy()
+
+general_h = [["?" for i in range(len(specific_h))] for j in range(len(specific_h))]
+
+for i, h in enumerate(concepts):
+    if target[i] == "Yes":
+        for x in range(len(specific_h)):
+            if h[x] != specific_h[x]:
+                specific_h[x] = '?'
+                general_h[x][x] = '?'
+
+    if target[i] == "No":
+        for x in range(len(specific_h)):
+            if h[x] != specific_h[x]:
+                general_h[x][x] = specific_h[x]
+            else:
+                general_h[x][x] = '?'
+
+print("Specific Hypothesis")
+print(specific_h)
+
+print("\nGeneral Hypothesis")
+for i in general_h:
+    print(i)
