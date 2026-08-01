@@ -1,0 +1,34 @@
+# Confusion Matrix Example - Spam Email Classification
+
+# Given values
+TP = 60   # True Positive
+TN = 100  # True Negative
+FP = 20   # False Positive
+FN = 20   # False Negative
+
+# Total emails
+total = TP + TN + FP + FN
+
+# Calculations
+accuracy = (TP + TN) / total
+precision = TP / (TP + FP)
+recall = TP / (TP + FN)
+sensitivity = recall
+specificity = TN / (TN + FP)
+f1_score = 2 * (precision * recall) / (precision + recall)
+
+# Display Results
+print("========== Confusion Matrix Metrics ==========")
+print(f"True Positive (TP): {TP}")
+print(f"True Negative (TN): {TN}")
+print(f"False Positive (FP): {FP}")
+print(f"False Negative (FN): {FN}")
+print(f"Total Emails: {total}")
+
+print("\n========== Performance Metrics ==========")
+print(f"Accuracy    : {accuracy:.2f} ({accuracy*100:.2f}%)")
+print(f"Precision   : {precision:.2f} ({precision*100:.2f}%)")
+print(f"Recall      : {recall:.2f} ({recall*100:.2f}%)")
+print(f"Sensitivity : {sensitivity:.2f} ({sensitivity*100:.2f}%)")
+print(f"Specificity : {specificity:.2f} ({specificity*100:.2f}%)")
+print(f"F1 Score    : {f1_score:.2f}")C
