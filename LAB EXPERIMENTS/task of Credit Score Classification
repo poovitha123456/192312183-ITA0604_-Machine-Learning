@@ -1,0 +1,140 @@
+# Credit Score Classification using Machine Learning
+# Google Colab
+
+# Step 1: Import libraries
+import pandas as pd
+import numpy as np
+import matplotlib.pyplot as plt
+
+from sklearn.model_selection import train_test_split
+from sklearn.preprocessing import LabelEncoder, StandardScaler
+from sklearn.ensemble import RandomForestClassifier
+from sklearn.metrics import accuracy_score, classification_report, confusion_matrix
+
+# Step 2: Create sample Credit Score dataset
+data = {
+    'Age': [25, 35, 45, 23, 52, 40, 29, 50, 31, 42,
+            27, 38, 48, 22, 55, 33, 46, 28, 39, 51],
+
+    'Annual_Income': [30000, 60000, 90000, 25000, 100000,
+                      75000, 40000, 95000, 55000, 80000,
+                      35000, 65000, 85000, 22000, 110000,
+                      50000, 92000, 38000, 70000, 98000],
+
+    'Loan_Amount': [15000, 20000, 10000, 18000, 8000,
+                    12000, 25000, 7000, 15000, 9000,
+                    22000, 13000, 6000, 20000, 5000,
+                    16000, 7500, 24000, 11000, 6500],
+
+    'Credit_History': [1, 1, 1, 0, 1,
+                       1, 0, 1, 1, 1,
+                       0, 1, 1, 0, 1,
+                       1, 1, 0, 1, 1],
+
+    'Debt_to_Income': [0.30, 0.20, 0.15, 0.55, 0.10,
+                       0.18, 0.60, 0.12, 0.25, 0.16,
+                       0.50, 0.22, 0.14, 0.65, 0.08,
+                       0.28, 0.13, 0.58, 0.21, 0.11],
+
+    'Credit_Score': [
+        'Good', 'Good', 'Good', 'Poor', 'Good',
+        'Good', 'Poor', 'Good', 'Good', 'Good',
+        'Poor', 'Good', 'Good', 'Poor', 'Good',
+        'Good', 'Good', 'Poor', 'Good', 'Good'
+    ]
+}
+
+df = pd.DataFrame(data)
+
+# Step 3: Display dataset
+print("Credit Score Dataset:")
+display(df)
+
+# Step 4: Separate input and output
+X = df.drop('Credit_Score', axis=1)
+y = df['Credit_Score']
+
+# Step 5: Encode target labels
+label_encoder = LabelEncoder()
+y = label_encoder.fit_transform(y)
+
+# Step 6: Split dataset into training and testing data
+X_train, X_test, y_train, y_test = train_test_split(
+    X, y, test_size=0.25, random_state=42, stratify=y
+)
+
+# Step 7: Scale the features
+scaler = StandardScaler()
+
+X_train = scaler.fit_transform(X_train)
+X_test = scaler.transform(X_test)
+
+# Step 8: Create Random Forest Classification model
+model = RandomForestClassifier(
+    n_estimators=100,
+    random_state=42
+)
+
+# Step 9: Train the model
+model.fit(X_train, y_train)
+
+# Step 10: Make predictions
+y_pred = model.predict(X_test)
+
+# Step 11: Calculate accuracy
+accuracy = accuracy_score(y_test, y_pred)
+
+print("\nModel Accuracy:", round(accuracy * 100, 2), "%")
+
+# Step 12: Classification report
+print("\nClassification Report:")
+print(classification_report(
+    y_test,
+    y_pred,
+    target_names=label_encoder.classes_,
+    zero_division=0
+))
+
+# Step 13: Confusion Matrix
+cm = confusion_matrix(y_test, y_pred)
+
+print("\nConfusion Matrix:")
+print(cm)
+
+# Display confusion matrix
+plt.figure(figsize=(5, 4))
+plt.imshow(cm)
+plt.title("Confusion Matrix")
+plt.xlabel("Predicted")
+plt.ylabel("Actual")
+plt.xticks(range(len(label_encoder.classes_)), label_encoder.classes_)
+plt.yticks(range(len(label_encoder.classes_)), label_encoder.classes_)
+
+for i in range(len(cm)):
+    for j in range(len(cm)):
+        plt.text(j, i, cm[i, j], ha='center', va='center')
+
+plt.show()
+
+# Step 14: Predict credit score for a new customer
+new_customer = pd.DataFrame({
+    'Age': [30],
+    'Annual_Income': [55000],
+    'Loan_Amount': [12000],
+    'Credit_History': [1],
+    'Debt_to_Income': [0.25]
+})
+
+# Scale new customer data
+new_customer_scaled = scaler.transform(new_customer)
+
+# Prediction
+prediction = model.predict(new_customer_scaled)
+
+# Convert prediction back to original label
+predicted_score = label_encoder.inverse_transform(prediction)
+
+print("\nNew Customer Details:")
+display(new_customer)
+
+print("Predicted Credit Score:", predicted_score[0])
