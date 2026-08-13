@@ -1,0 +1,115 @@
+# Naive Bayes Classification for Bank Loan Prediction
+# Google Colab
+
+import pandas as pd
+import matplotlib.pyplot as plt
+
+from sklearn.model_selection import train_test_split
+from sklearn.naive_bayes import GaussianNB
+from sklearn.preprocessing import StandardScaler
+from sklearn.metrics import accuracy_score, classification_report, confusion_matrix
+
+# Create sample bank loan dataset
+data = {
+    "Age": [25, 35, 45, 28, 52, 40, 30, 48, 23, 55,
+            32, 42, 27, 50, 38, 29, 46, 34, 41, 26],
+
+    "Income": [25000, 50000, 80000, 30000, 90000,
+               65000, 35000, 85000, 22000, 95000,
+               45000, 70000, 28000, 88000, 60000,
+               32000, 78000, 48000, 68000, 26000],
+
+    "LoanAmount": [200000, 300000, 400000, 250000, 350000,
+                   300000, 400000, 350000, 250000, 300000,
+                   280000, 350000, 220000, 400000, 300000,
+                   250000, 350000, 280000, 320000, 230000],
+
+    "CreditScore": [650, 720, 780, 620, 750,
+                    700, 600, 760, 580, 790,
+                    680, 740, 610, 770, 710,
+                    630, 750, 690, 730, 590],
+
+    "LoanApproved": [
+        1, 1, 1, 0, 1,
+        1, 0, 1, 0, 1,
+        1, 1, 0, 1, 1,
+        0, 1, 1, 1, 0
+    ]
+}
+
+df = pd.DataFrame(data)
+
+print("Bank Loan Dataset:")
+display(df)
+
+# Input features
+X = df[
+    ["Age", "Income", "LoanAmount", "CreditScore"]
+]
+
+# Target
+y = df["LoanApproved"]
+
+# Split data
+X_train, X_test, y_train, y_test = train_test_split(
+    X, y,
+    test_size=0.2,
+    random_state=42,
+    stratify=y
+)
+
+# Standardize features
+scaler = StandardScaler()
+
+X_train = scaler.fit_transform(X_train)
+X_test = scaler.transform(X_test)
+
+# Create Naive Bayes model
+model = GaussianNB()
+
+# Train model
+model.fit(X_train, y_train)
+
+# Prediction
+y_pred = model.predict(X_test)
+
+# Accuracy
+accuracy = accuracy_score(y_test, y_pred)
+
+print("\nNaive Bayes Accuracy:",
+      round(accuracy * 100, 2), "%")
+
+# Classification report
+print("\nClassification Report:")
+print(classification_report(
+    y_test,
+    y_pred,
+    target_names=["Rejected", "Approved"],
+    zero_division=0
+))
+
+# Confusion matrix
+cm = confusion_matrix(y_test, y_pred)
+
+print("\nConfusion Matrix:")
+print(cm)
+
+# Predict a new loan application
+new_customer = [[35, 60000, 300000, 720]]
+
+new_customer_scaled = scaler.transform(new_customer)
+
+prediction = model.predict(new_customer_scaled)
+
+if prediction[0] == 1:
+    result = "Loan Approved"
+else:
+    result = "Loan Rejected"
+
+print("\nNew Customer Details:")
+print("Age: 35")
+print("Income: ₹60,000")
+print("Loan Amount: ₹3,00,000")
+print("Credit Score: 720")
+
+print("\nPrediction:", result)
