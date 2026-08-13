@@ -1,0 +1,40 @@
+import numpy as np
+import matplotlib.pyplot as plt
+
+# Example data
+X = np.array([1, 2, 3, 4, 5, 6])
+y = np.array([35, 42, 50, 55, 65, 70])
+
+# New student's study hours
+query = 4.5
+
+# Calculate weights
+tau = 1.0
+weights = np.exp(-((X - query) ** 2) / (2 * tau ** 2))
+
+# Design matrix
+X_design = np.column_stack((np.ones(len(X)), X))
+
+# Weight matrix
+W = np.diag(weights)
+
+# Locally Weighted Linear Regression
+theta = np.linalg.pinv(
+    X_design.T @ W @ X_design
+) @ X_design.T @ W @ y
+
+# Prediction
+prediction = np.array([1, query]) @ theta
+
+print("\nNew student studies:", query, "hours")
+print("Predicted Mark:", round(prediction, 2))
+
+# Plot
+plt.scatter(X, y, label="Students")
+plt.scatter(query, prediction, s=120, label="New Student")
+
+plt.xlabel("Study Hours")
+plt.ylabel("Marks")
+plt.title("Locally Weighted Regression")
+plt.legend()
+plt.show()
